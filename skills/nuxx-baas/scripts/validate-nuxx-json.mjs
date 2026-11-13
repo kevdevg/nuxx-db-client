@@ -54,9 +54,16 @@ const RESERVED_TABLE_NAMES = new Set([
 const ALLOWED_ROOT_KEYS = new Set([
   'description',
   'agentHints',
+  'archive',
   'pwa',
   'tables',
   'roles',
+]);
+
+const ALLOWED_ARCHIVE_KEYS = new Set([
+  'rootTables',
+  'fileExtension',
+  'aiContext',
 ]);
 
 const ALLOWED_PWA_KEYS = new Set([
@@ -191,6 +198,24 @@ if (!Array.isArray(doc.tables) || doc.tables.length === 0) {
         if (col.description !== undefined && typeof col.description !== 'string') {
           errors.push(`${cPath} ("${col.name}").description: debe ser un string.`);
         }
+        if (col.enum !== undefined) {
+          if (!Array.isArray(col.enum) || col.enum.length === 0) {
+            errors.push(
+              `${cPath} ("${col.name}").enum: debe ser un arreglo no vacío de valores string o number.`
+            );
+          } else {
+            col.enum.forEach((val, eIdx) => {
+              if (
+                (typeof val !== 'string' && typeof val !== 'number') ||
+                (typeof val === 'number' && !Number.isFinite(val))
+              ) {
+                errors.push(
+                  `${cPath} ("${col.name}").enum[${eIdx}]: debe ser string o number finito.`
+                );
+              }
+            });
+          }
+        }
 
         if (col.name === '_id' && col.required === true) {
           errors.push(
@@ -319,6 +344,45 @@ if (doc.pwa !== undefined) {
           }
         });
       }
+    }
+  }
+}
+
+// Validate archive
+if (doc.archive !== undefined) {
+  if (!isPlainObject(doc.archive)) {
+    errors.push('`archive` debe ser un objeto.');
+  } else {
+    for (const key of Object.keys(doc.archive)) {
+      if (!ALLOWED_ARCHIVE_KEYS.has(key)) {
+        warnings.push(
+          `\`archive.${key}\` será ignorado (permitidos: ${[...ALLOWED_ARCHIVE_KEYS].join(', ')}).`
+        );
+      }
+    }
+    if (doc.archive.rootTables !== undefined) {
+      if (!Array.isArray(doc.archive.rootTables)) {
+        errors.push('`archive.rootTables` debe ser un arreglo de strings.');
+      } else {
+        doc.archive.rootTables.forEach((tName, idx) => {
+          if (typeof tName !== 'string' || !tName.trim()) {
+            errors.push(`archive.rootTables[${idx}] debe ser un string no vacío.`);
+          } else if (!declaredTables.has(tName)) {
+            errors.push(
+              `archive.rootTables[${idx}] ("${tName}") no coincide con ninguna tabla declarada en \`tables\`.`
+            );
+          }
+        });
+      }
+    }
+    if (
+      doc.archive.fileExtension !== undefined &&
+      (typeof doc.archive.fileExtension !== 'string' || !doc.archive.fileExtension.trim())
+    ) {
+      errors.push('`archive.fileExtension` debe ser un string no vacío.');
+    }
+    if (doc.archive.aiContext !== undefined && typeof doc.archive.aiContext !== 'string') {
+      errors.push('`archive.aiContext` debe ser un string.');
     }
   }
 }

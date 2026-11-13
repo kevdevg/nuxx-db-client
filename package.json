@@ -1,6 +1,6 @@
 {
   "name": "@nuxx-brandly/db-client",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Nuxx BaaS Offline-First Client SDK & Official Antigravity AI Plugin",
   "homepage": "https://github.com/kevdevg/nuxx-db-client#readme",
   "repository": {

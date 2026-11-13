@@ -12,7 +12,7 @@ description: >-
 
 # Integración de Aplicaciones Cliente con Nuxx BaaS
 
-Esta skill guía la arquitectura e integración de aplicaciones cliente sobre **Nuxx BaaS** (`@nuxx-brandly/db-client` v0.6+) mediante **carga progresiva**. Lee **únicamente** los archivos en `references/` que correspondan a la tarea actual para proteger la ventana de contexto.
+Esta skill guía la arquitectura e integración de aplicaciones cliente sobre **Nuxx BaaS** (`@nuxx-brandly/db-client` v0.7+) mediante **carga progresiva**. Lee **únicamente** los archivos en `references/` que correspondan a la tarea actual para proteger la ventana de contexto.
 
 ---
 
@@ -65,6 +65,7 @@ Lee bajo demanda **solo** los módulos requeridos por tu tarea:
 | Login/registro, Magic Links (`?nuxx_magic=`), `useAuthSession`, gestión de usuarios y permisos RBAC | [03-auth-and-rbac.md](./references/03-auth-and-rbac.md) |
 | Modo PWA Offline-First, `preloadTables`, compactación Outbox, `useSyncStatus` y archivos offline `offline-blob://` | [04-pwa-offline-sync.md](./references/04-pwa-offline-sync.md) |
 | Subida S3 (`db.files`), correos (`db.email`), Sockets (`useSocket`), IA (`useAI`), `@brandly/sdk` y `Dockerfile` Coolify | [05-platform-brand-and-deploy.md](./references/05-platform-brand-and-deploy.md) |
+| Exportación/importación de paquetes `.nuxx.zip` o JSON, bloque `archive`, `columns[].enum`, plantillas y Kit de Prompts IA (`db.archive`) | [06-archive-and-ai-kit.md](./references/06-archive-and-ai-kit.md) |
 
 ---
 

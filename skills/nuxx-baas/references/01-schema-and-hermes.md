@@ -14,8 +14,9 @@ El backend (`NuxxSchemaSyncService`) valida todo `nuxx.json` contra este contrat
     - `summary` (`string`, opcional): Cómo opera el modelo de datos.
     - `workflows` (`string[]`, opcional): Flujos de negocio clave que un agente puede ejecutar o consultar.
     - `readOnlyTables` (`string[]`, opcional): Tablas que agentes externos no deben mutar directamente.
+  - `archive` (`object`, opcional): Configuración del motor de exportación/importación `.nuxx.zip` y Kit IA (`rootTables`, `fileExtension`, `aiContext` — ver `06-archive-and-ai-kit.md`).
   - `pwa` (`object`, opcional): Configuración PWA Offline-First (ver `04-pwa-offline-sync.md`).
-  - `tables` (`array`, **obligatorio**, mín. 1 tabla): Definición de colecciones.
+  - `tables` (`array`, **obligatorio**, mín. 1 tabla): Definición de colecciones (cada columna soporta opcionalmente `enum: (string | number)[]`).
   - `roles` (`array`, opcional, default `[]`): Semilla inicial de roles `{ name: string, permissions?: Record<string, any> }`.
 
 ---

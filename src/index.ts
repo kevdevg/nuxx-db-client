@@ -1,3 +1,4 @@
+import { NuxxDbArchive } from './archive';
 import { NuxxOfflineStore } from './offline/indexedDbStore';
 import { executeLocalQuery, matchesFilters } from './offline/localQueryEngine';
 import { generateObjectId } from './offline/objectId';
@@ -774,6 +775,8 @@ export class NuxxDbClient {
   email: NuxxDbEmail;
   /** Offline-first storage & incremental delta synchronization engine. */
   sync: NuxxSyncManager;
+  /** Universal `.nuxx.zip` / JSON package export, import, template & AI Kit engine. */
+  archive: NuxxDbArchive;
 
   constructor(url: string, apiKey: string, options?: NuxxClientOptions) {
     // Expected URL format: https://api.nuxx.app/api/nuxx-db/repoName
@@ -796,6 +799,7 @@ export class NuxxDbClient {
     this.sync = new NuxxSyncManager(url, apiBaseUrl, this.headers, store, autoSync);
     this.files = new NuxxDbFiles(apiBaseUrl, this.headers, this.sync, this.offlineEnabled);
     this.email = new NuxxDbEmail(apiBaseUrl, this.headers);
+    this.archive = new NuxxDbArchive(this.url, this.headers, this.sync, this.offlineEnabled);
   }
 
   /**
@@ -898,6 +902,7 @@ export class NuxxDbClient {
 export function createClient(url: string, apiKey: string, options?: NuxxClientOptions) {
   return new NuxxDbClient(url, apiKey, options);
 }
+export * from './archive';
 export * from './useSocket';
 export * from './useAI';
 export * from './useSyncStatus';

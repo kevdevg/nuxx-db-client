@@ -236,13 +236,69 @@ function AssistantWidget() {
 }
 ```
 
+## Paso 8: Importación/Exportación de Paquetes (`.zip`) y Kit IA (`db.archive`)
+
+`db.archive` permite exportar e importar paquetes relacionales completos (`.nuxx.zip` con binarios S3 incluidos o JSON puro generado por IA) remapeando IDs simbólicos a `ObjectId` reales, subiendo archivos de `assets/*` a S3 y refrescando automáticamente las tablas afectadas en IndexedDB:
+
+```typescript
+// 1. Descargar paquete .nuxx.zip en el navegador (toda la app o un sub-grafo por entidad raíz)
+const { error: dlErr } = await db.archive.downloadExport({
+  rootTable: 'courses',
+  rootId: courseId,
+  includeAssets: true,
+  filename: 'curso-completo.nuxx.zip',
+});
+
+// 2. Obtener el Blob del .nuxx.zip programáticamente sin disparar descarga
+const { data: zipBlob, error: zipErr } = await db.archive.exportZip({
+  rootTable: 'courses',
+  rootId: courseId,
+  includeAssets: true,
+});
+
+// 3. Importar un paquete .nuxx.zip desde un <input type="file" />
+const { data: importedZip, error: impErr } = await db.archive.importPackage(selectedZipFile, {
+  rootTable: 'courses',
+});
+// importedZip -> { rootTable, rootIds, idMap, importedCounts, assetsUploaded, unreferencedAssets }
+
+// 4. Importar un payload JSON directo (objeto o string JSON con IDs simbólicos e inlineAssets opcionales)
+const { data: importedJson, error: jsonErr } = await db.archive.importJson(
+  {
+    tables: {
+      courses: [{ _id: 'course_1', title: 'Intro a Nuxx', coverUrl: 'assets/covers/banner.svg' }],
+      lessons: [{ _id: 'lesson_1', courseId: 'course_1', title: ' Setup inicial' }],
+    },
+    inlineAssets: {
+      'assets/covers/banner.svg': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80"></svg>',
+    },
+  },
+  { rootTable: 'courses' }
+);
+
+// 5. Generar Kit de Prompt IA (para ChatGPT, Claude o Gemini) adaptado al esquema y enums de nuxx.json
+const { data: aiKit } = await db.archive.getAiKit({
+  rootTable: 'courses',
+  mode: 'json', // 'zip' | 'json'
+  brief: 'Curso de onboarding técnico en 4 lecciones',
+});
+// aiKit -> { prompt, fileExtension, schemaSummary }
+
+// 6. Descargar plantilla .nuxx.zip de ejemplo lista para rellenar
+await db.archive.downloadTemplate({
+  rootTable: 'courses',
+  filename: 'plantilla-curso.nuxx.zip',
+});
+```
+
 ## API Reference
 
 `createClient(url: string, apiKey: string, options?: { auth?: { token?: string }; offline?: { enabled?: boolean; dbName?: string; autoSync?: boolean } })` → `NuxxDbClient`
 
 - `db.from(table)` → `{ select, insert, update, delete, bulkUpdate, bulkDelete }`
 - `db.auth` → `{ signUp, signIn, signInWithMagicLink, buildMagicLinkUrl, regenerateMagicLink, signOut, getUser, getSession, ready, onAuthStateChange }`
-- `db.sync` → `{ getState, subscribe, flushSync, pullTable }`
+- `db.archive` → `{ exportZip, downloadExport, importPackage, importJson, getAiKit, downloadTemplate }`
+- `db.sync` → `{ getState, subscribe, flushSync, pullCollectionDeltas }`
 - `db.files` → `{ upload }`
 - `db.email` → `{ send }`
 - React Hooks: `useAuthSession(db)`, `useSyncStatus(db)`, `useAI(db)`, `useSocket(options)`

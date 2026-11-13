@@ -84,7 +84,13 @@ for (const table of schema.tables) {
   for (const col of table.columns || []) {
     if (reserved.has(col.name)) continue;
     const optional = col.required ? '' : '?';
-    const tsType = mapColumnType(col.type);
+    const hasEnum =
+      Array.isArray(col.enum) &&
+      col.enum.length > 0 &&
+      col.enum.every((v) => typeof v === 'string' || (typeof v === 'number' && Number.isFinite(v)));
+    const tsType = hasEnum
+      ? col.enum.map((v) => JSON.stringify(v)).join(' | ')
+      : mapColumnType(col.type);
     const comment = col.description ? ` // ${col.description}` : '';
     lines.push(`  ${col.name}${optional}: ${tsType};${comment}`);
   }
