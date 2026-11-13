@@ -171,6 +171,50 @@ function clearWorkingTreeExceptGit(repoDir) {
   }
 }
 
+function syncLocalPersonalMirrors() {
+  const homeDir = process.env.NUXX_TEST_HOME || os.homedir();
+
+  try {
+    const personalSkillsParent = path.join(homeDir, '.gemini', 'antigravity', 'skills');
+    const srcSkillDir = path.join(PKG_ROOT, 'skills', 'nuxx-baas');
+    if (fs.existsSync(personalSkillsParent) && fs.existsSync(srcSkillDir)) {
+      const destSkillDir = path.join(personalSkillsParent, 'nuxx-baas');
+      fs.rmSync(destSkillDir, { recursive: true, force: true });
+      fs.cpSync(srcSkillDir, destSkillDir, {
+        recursive: true,
+        filter: (src) => path.basename(src) !== '.DS_Store',
+      });
+      console.log(
+        '🔄 [sync-local] Skill personal actualizada en ~/.gemini/antigravity/skills/nuxx-baas'
+      );
+    }
+  } catch (err) {
+    console.warn(
+      `⚠️ [sync-local] No se pudo sincronizar ~/.gemini/antigravity/skills/nuxx-baas: ${err.message}`
+    );
+  }
+
+  try {
+    const globalPluginDir = path.join(
+      homeDir,
+      '.gemini',
+      'config',
+      'plugins',
+      'nuxx-baas-plugin'
+    );
+    if (fs.existsSync(path.join(globalPluginDir, '.git'))) {
+      runGit(['pull', '--ff-only', 'origin', 'main', '--quiet'], globalPluginDir);
+      console.log(
+        '🔄 [sync-local] Plugin global actualizado en ~/.gemini/config/plugins/nuxx-baas-plugin'
+      );
+    }
+  } catch (err) {
+    console.warn(
+      `⚠️ [sync-local] No se pudo actualizar ~/.gemini/config/plugins/nuxx-baas-plugin: ${err.message}`
+    );
+  }
+}
+
 const pkgJson = JSON.parse(
   fs.readFileSync(path.join(PKG_ROOT, 'package.json'), 'utf8')
 );
@@ -240,6 +284,10 @@ try {
     console.log(
       `🚀 [sync-github] Sincronizado v${version} hacia ${REMOTE_URL} (${scannedCount} archivos verificados).`
     );
+  }
+
+  if (!IS_DRY_RUN) {
+    syncLocalPersonalMirrors();
   }
 } finally {
   fs.rmSync(tmpBase, { recursive: true, force: true });

@@ -27,6 +27,25 @@ function emitAndExit(payloadObj = {}) {
   process.exit(0);
 }
 
+function syncPersonalSkillMirror(cwd) {
+  try {
+    const homeDir = process.env.NUXX_TEST_HOME || os.homedir();
+    const personalSkillsParent = path.join(homeDir, '.gemini', 'antigravity', 'skills');
+    const srcSkillDir = path.join(cwd, 'skills', 'nuxx-baas');
+    if (!fs.existsSync(personalSkillsParent) || !fs.existsSync(srcSkillDir)) {
+      return;
+    }
+    const destSkillDir = path.join(personalSkillsParent, 'nuxx-baas');
+    fs.rmSync(destSkillDir, { recursive: true, force: true });
+    fs.cpSync(srcSkillDir, destSkillDir, {
+      recursive: true,
+      filter: (src) => path.basename(src) !== '.DS_Store',
+    });
+  } catch {
+    // Silent no-op on third-party machines without ~/.gemini/antigravity/skills
+  }
+}
+
 try {
   // Drain/ignore stdin without blocking execution
   if (process.stdin) {
@@ -102,6 +121,8 @@ try {
   if (!updatedSha || updatedSha === localSha) {
     emitAndExit({});
   }
+
+  syncPersonalSkillMirror(cwd);
 
   const updatedManifest = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
   const version =
