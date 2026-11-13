@@ -1,0 +1,52 @@
+{
+  "name": "@nuxx-brandly/db-client",
+  "version": "0.6.1",
+  "description": "Nuxx BaaS Offline-First Client SDK & Official Antigravity AI Plugin",
+  "homepage": "https://github.com/kevdevg/nuxx-db-client#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevdevg/nuxx-db-client.git"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "nuxx-baas": "./bin/nuxx-baas.mjs"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "bin",
+    "scripts",
+    "assets",
+    "plugin.json",
+    "hooks.json",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "sync:github": "node ./scripts/sync-github.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.3"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "tsup": "^8.0.2",
+    "typescript": "^5.0.0"
+  }
+}

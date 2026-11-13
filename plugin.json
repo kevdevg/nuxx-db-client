@@ -1,0 +1,18 @@
+{
+  "name": "nuxx-baas-plugin",
+  "displayName": "Nuxx BaaS & Offline-First SDK",
+  "version": "0.6.1",
+  "description": "Build, validate, and deploy full-stack React/Vite Offline-First PWAs on Nuxx BaaS using nuxx.json, @nuxx-brandly/db-client, Magic Links, Delta Sync, and @brandly/sdk.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Diseña el esquema nuxx.json y conecta esta app con @nuxx-brandly/db-client",
+    "Agrega autenticación passwordless con Magic Links usando useAuthSession",
+    "Valida mi nuxx.json, genera tipos TypeScript y verifica el Dockerfile para Coolify"
+  ],
+  "author": {
+    "name": "Nuxx / Brandly",
+    "url": "https://nuxx.app"
+  },
+  "homepage": "https://nuxx.app",
+  "repository": "https://github.com/kevdevg/nuxx-db-client"
+}

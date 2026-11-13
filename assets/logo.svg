@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
+  <defs>
+    <linearGradient id="nuxxBg" x1="28" y1="28" x2="228" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="55%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="nuxxAccent" x1="80" y1="72" x2="184" y2="184" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E0F2FE" />
+    </linearGradient>
+  </defs>
+  <!-- ~11% transparent margin around 200x200 badge for dark & light theme contrast -->
+  <rect x="28" y="28" width="200" height="200" rx="46" fill="url(#nuxxBg)" />
+  <rect x="30" y="30" width="196" height="196" rx="44" stroke="#FFFFFF" stroke-opacity="0.24" stroke-width="4" />
+
+  <!-- Top Database Cylinder Cap -->
+  <ellipse cx="128" cy="86" rx="54" ry="18" fill="url(#nuxxAccent)" />
+
+  <!-- Middle Tier (Delta Sync Layer) -->
+  <path d="M74 112C74 121.941 98.1766 130 128 130C157.823 130 182 121.941 182 112V132C182 141.941 157.823 150 128 150C98.1766 150 74 141.941 74 132V112Z" fill="#FFFFFF" fill-opacity="0.9" />
+
+  <!-- Bottom Tier (Offline Store Layer) -->
+  <path d="M74 150C74 159.941 98.1766 168 128 168C157.823 168 182 159.941 182 150V170C182 179.941 157.823 188 128 188C98.1766 188 74 179.941 74 170V150Z" fill="#FFFFFF" fill-opacity="0.78" />
+
+  <!-- Sync Pulse Badge -->
+  <circle cx="176" cy="172" r="24" fill="#0F172A" stroke="#38BDF8" stroke-width="4" />
+  <path d="M178 159L168 173H176L174 185L184 171H176L178 159Z" fill="#38BDF8" />
+</svg>
