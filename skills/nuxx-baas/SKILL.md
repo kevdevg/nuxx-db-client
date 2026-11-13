@@ -69,16 +69,24 @@ Lee bajo demanda **solo** los módulos requeridos por tu tarea:
 
 ---
 
-## 4. Verificación Obligatoria Antes de Entregar o Hacer Push
+## 4. Verificación y Sincronización Instantánea de Esquema (Cero Redeploy)
 
-1. **Valida `nuxx.json`**: si el proyecto tiene instalado `@nuxx-brandly/db-client`, ejecuta directamente el CLI incluido:
-   ```bash
-   npx nuxx-baas validate ./nuxx.json
-   ```
-   *(Alternativamente, ejecuta el script en ruta relativa respecto a la carpeta de este `SKILL.md`: `node ./scripts/validate-nuxx-json.mjs ./nuxx.json`, o desde el plugin global `~/.gemini/config/plugins/nuxx-baas-plugin/skills/nuxx-baas/scripts/validate-nuxx-json.mjs`).*
+1. **Valida y sincroniza `nuxx.json` en caliente durante desarrollo local (`npm run dev`, antes de hacer commit/push):**
+   - Para validar localmente:
+     ```bash
+     npx nuxx-baas validate ./nuxx.json
+     ```
+     *(O ejecuta el script relativo a esta carpeta `SKILL.md`: `node ./scripts/validate-nuxx-json.mjs ./nuxx.json`).*
+   - Para **aplicar cambios de `nuxx.json` en <1 segundo** directamente contra Nuxx BaaS usando las variables `VITE_*` de `.env` / `.env.local` (tablas, columnas, `enum`, `description`, `foreignKeys`, `roles`, `agentHints` y `archive` sin reconstruir imagen Docker):
+     ```bash
+     npx nuxx-baas sync ./nuxx.json
+     ```
+     *(Nota de seguridad: desactivar `requiresAuth: true -> false` sobre una tabla ya existente está bloqueado con llave pública y requiere `git push` a Gitea o consola administrativa).*
 2. **(Opcional) Genera interfaces TypeScript** sincronizadas con `nuxx.json`:
    ```bash
    npx nuxx-baas gen-types ./nuxx.json ./src/lib/database.types.ts
    ```
    *(O usando la ruta relativa respecto a esta carpeta `SKILL.md`: `node ./scripts/gen-nuxx-types.mjs ./nuxx.json ./src/lib/database.types.ts`).*
-3. **Compila la aplicación** (`npm run build` / `tsc -b && vite build`) y recuerda al usuario sincronizar el esquema en la consola de Nuxx tras hacer `git push` a Gitea si cambió `nuxx.json`.
+3. **Compila y despliega (`npm run build` + `git push` a Gitea):**
+   - Al hacer `git push` a Gitea, el servidor detecta automáticamente cualquier cambio en `nuxx.json` (vía webhook de Gitea + verificación SHA perezosa) y actualiza el esquema en MongoDB en caliente **sin necesidad de relanzar el despliegue en Coolify ni pulsar botones manuales en Nuxx UI**.
+   - Solo se requiere redeploy del contenedor en Coolify cuando cambia el código frontend (`src/*`, dependencias) o la sección `pwa` de `nuxx.json`.

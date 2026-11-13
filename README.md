@@ -39,10 +39,13 @@ npx nuxx-baas init
 # 1. Link node_modules/@nuxx-brandly/db-client/skills into .agents/skills.json
 npx nuxx-baas init
 
-# 2. Validate ./nuxx.json (column types, reserved tables, FK objectId integrity, preloadTables)
+# 2. Validate ./nuxx.json (column types, reserved tables, FK objectId integrity, archive, preloadTables)
 npx nuxx-baas validate ./nuxx.json
 
-# 3. Generate TypeScript interfaces from ./nuxx.json into ./src/lib/database.types.ts
+# 3. Hot-sync ./nuxx.json to Nuxx BaaS in <1s using .env / .env.local (zero container redeploy!)
+npx nuxx-baas sync ./nuxx.json
+
+# 4. Generate TypeScript interfaces from ./nuxx.json into ./src/lib/database.types.ts
 npx nuxx-baas gen-types ./nuxx.json ./src/lib/database.types.ts
 ```
 

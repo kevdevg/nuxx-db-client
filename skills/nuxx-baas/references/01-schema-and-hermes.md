@@ -150,4 +150,15 @@ Solo existen estos **7 tipos exactos**:
 }
 ```
 
-> **Importante tras `git push` a Gitea:** Hacer push del archivo `nuxx.json` al repositorio Gitea **no** ejecuta `syncFromGitea` automáticamente por sí solo; tras subir cambios en `nuxx.json`, sincroniza el esquema desde la pestaña **Base de Datos** en Nuxx UI (o despliega desde la consola).
+## 5. Sincronización Instantánea de `nuxx.json` (Sin Redeploy ni Pasos Manuales)
+
+1. **En desarrollo local (`npm run dev`, antes de hacer commit/push):**
+   Ejecuta directamente:
+   ```bash
+   npx nuxx-baas sync ./nuxx.json
+   ```
+   El CLI valida `nuxx.json` localmente, lee `VITE_API_URL`, `VITE_APP_ID` (o `VITE_PROJECT_ID`) y `VITE_NUXX_DB_API_KEY` desde `.env.local` / `.env`, y aplica en caliente (<1 segundo) tablas, columnas, `enum`, `description`, `foreignKeys`, `roles`, `agentHints` y `archive` contra Nuxx BaaS (`POST /api/nuxx-db/:appId/schema/sync`).
+   - *Restricción de seguridad:* Por protección anti-downgrade, cambiar una tabla existente de `"requiresAuth": true` a `false` usando la llave pública es rechazado (`403`); ese cambio exige `git push` al repositorio Gitea o intervención desde la consola administrativa.
+2. **Al hacer `git push` a Gitea:**
+   El backend detecta automáticamente cambios en `nuxx.json` (mediante webhook de Gitea + verificación SHA perezosa) y sincroniza el esquema en MongoDB en caliente **sin necesidad de relanzar el despliegue en Coolify ni entrar manualmente a Nuxx UI**.
+   - Solo necesitas redesplegar el contenedor en Coolify cuando cambia código frontend (`src/*`, `package.json`) o la configuración de build `nuxx.json -> pwa`.
